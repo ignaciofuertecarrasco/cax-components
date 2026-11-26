@@ -1,0 +1,15 @@
+name: "vane-surrogate"
+version: "1.0.0"
+description: >
+  Differentiable Gaussian-process surrogate of the cooled-vane thermo-mechanical FEA (JAX):
+  peak/mean metal temperature, stress, first natural frequency and coolant pressure drop as
+  functions of the cooling design, with uncertainty and exact derivatives.
+
+build_config:
+  base_image: "debian:bookworm-slim"
+  requirements:
+    provider: uv-pip
+    python_version: "3.12"
+  target_platform: "native"
+  package_data:
+    - ["model.json", "/tesseract/model.json"]

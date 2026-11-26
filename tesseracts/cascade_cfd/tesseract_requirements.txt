@@ -1,0 +1,2 @@
+# the turboai package is copied next to this file by scripts/build.sh (wheel of the TurboAI repository)
+./wheels/turboai-1.0.0-py3-none-any.whl

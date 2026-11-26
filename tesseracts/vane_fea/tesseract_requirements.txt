@@ -1,0 +1,2 @@
+# the vanefea package is copied next to this file by scripts/build.sh (wheel of the vane-thermomech repository)
+./wheels/vanefea-1.0.0-py3-none-any.whl

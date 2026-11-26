@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+tesseracts/*/wheels/
+tesseracts/*/lib/
+results/runs/
+vane-thermomech/
+
+# reports and papers are kept private
+docs/

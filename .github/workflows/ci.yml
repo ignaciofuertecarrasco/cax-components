@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  surrogate-component:
+    # the differentiable component is tested from source (no Docker): schema, apply and gradients
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "tesseract-core[runtime]" tesseract-jax "jax[cpu]" equinox pytest ruff
+      - run: ruff check .
+      - run: pytest -q tests
+
+  build-images:
+    # build the three Tesseract images (solver packages from their own repositories)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/vane-thermomech
+          path: vane-thermomech
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install tesseract-core
+      - run: VANEFEA_SRC=./vane-thermomech bash scripts/build.sh vane_surrogate vane_fea
+      - name: Run the FEA component on its default design
+        run: |
+          tesseract run vane-fea apply '{"inputs": {"return_fields": false}}'

@@ -1,0 +1,40 @@
+name: Publish image
+
+# Builds the differentiable surrogate component on a cloud runner, checks it on the baseline design and
+# publishes it to the GitHub Container Registry:  docker pull ghcr.io/<owner>/vane-surrogate:latest
+
+on:
+  push:
+    branches: [main]
+    paths: ["tesseracts/vane_surrogate/**", ".github/workflows/publish-image.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  vane-surrogate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install tesseract-core
+      - name: Build
+        run: tesseract build tesseracts/vane_surrogate
+      - name: Smoke test on the baseline design
+        run: |
+          out=$(docker run --rm vane-surrogate:latest apply \
+            '{"inputs": {"n": 7, "ratio": 0.4, "f_start": 0.1, "f_end": 0.8, "coolant": 0.03}}')
+          echo "$out"
+          python -c "import json,sys; t=json.loads(sys.argv[1])['T_mean']['data']['buffer']; assert 1100 < t < 1200, t" "$out"
+      - name: Push to ghcr.io
+        run: |
+          owner=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          for tag in latest 1.0.0; do
+            docker tag vane-surrogate:latest "ghcr.io/$owner/vane-surrogate:$tag"
+            docker push "ghcr.io/$owner/vane-surrogate:$tag"
+          done

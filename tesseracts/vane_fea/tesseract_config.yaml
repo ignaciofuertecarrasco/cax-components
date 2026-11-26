@@ -1,0 +1,27 @@
+name: "vane-fea"
+version: "1.0.0"
+description: >
+  Thermo-mechanical and modal analysis of a cooled turbine vane: parametric CAD (CadQuery),
+  quadratic tetrahedral mesh (gmsh), steady conduction coupled with a 1D coolant model, thermal
+  and pressure stresses and pre-stressed natural frequencies (CalculiX).
+
+build_config:
+  base_image: "debian:bookworm-slim"
+  requirements:
+    provider: uv-pip
+    python_version: "3.12"
+  target_platform: "native"
+  extra_packages:
+    - calculix-ccx
+    - libglu1-mesa
+    - libgl1
+    - libxrender1
+    - libxcursor1
+    - libxft2
+    - libxinerama1
+    - libxi6
+    - libgomp1
+    - libfontconfig1
+    - libxext6
+    - libsm6
+    - libice6

@@ -1,0 +1,33 @@
+name: "cascade-cfd"
+version: "1.0.0"
+description: >
+  2D compressible RANS of the VKI LS-89 turbine cascade (OpenFOAM rhoSimpleFoam, k-omega SST),
+  from blade-shape parameters and operating point to loss, exit angle, mass flow and wall
+  distributions; in heat-transfer mode, the hot-gas boundary conditions (T_aw, h) for a thermal
+  analysis of the vane.
+
+build_config:
+  base_image: "opencfd/openfoam-run:2606"
+  requirements:
+    provider: uv-pip
+    python_version: "3.12"
+  target_platform: "native"
+  extra_packages:
+    - libglu1-mesa
+    - libgl1
+    - libxrender1
+    - libxcursor1
+    - libxft2
+    - libxinerama1
+    - libxi6
+    - libgomp1
+    - libfontconfig1
+    - libxext6
+    - libsm6
+    - libice6
+  package_data:
+    - ["lib/libturboaiFvOptions.so", "/opt/turboai/lib/libturboaiFvOptions.so"]
+
+env:
+  TURBOAI_RUNS: "/tmp/turboai-runs"
+  TURBOAI_FOAM_EXTRA_LIBS: "/opt/turboai/lib"
